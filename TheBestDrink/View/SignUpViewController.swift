@@ -35,6 +35,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
         textField.placeholder = "Email"
         textField.borderStyle = .roundedRect
         textField.keyboardType = .emailAddress
+        textField.autocapitalizationType = .none  // Garante que o teclado inicie com letra minúscula
         return textField
     }()
     
@@ -148,16 +149,16 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
     
     @objc func signUpButtonTapped() {
         guard let name = nameTextField.text, !name.isEmpty,
-              let email = emailTextField.text, !email.isEmpty,
+              let email = emailTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines), !email.isEmpty,
               let password = passwordTextField.text, !password.isEmpty else {
-            showAlert(title: "Error", message: "All fields are required.")
+            showAlert(title: "Error", message: NSLocalizedString("All fields are required.", comment: "Empty fields error message"))
             return
         }
         
         guard let firstCharacter = email.first, firstCharacter.isLowercase else {
-                showAlert(title: "Error", message: "Email must start with a lowercase letter.")
-                return
-            }
+            showAlert(title: "Error", message: NSLocalizedString("Email must start with a lowercase letter.", comment: "Email format error message"))
+            return
+        }
         
         saveUser(name: name, email: email, password: password)
     }
@@ -177,8 +178,8 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
     }
     
     func showSuccessAlert() {
-        let alert = UIAlertController(title: "Success", message: "User registered successfully.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+        let alert = UIAlertController(title: "Success", message: NSLocalizedString("User registered successfully.", comment: "Success message"), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK action"), style: .default, handler: { _ in
             self.navigateToListView()
         }))
         present(alert, animated: true, completion: nil)
@@ -192,7 +193,7 @@ class SignUpViewController: UIViewController, UITextFieldDelegate {
     
     func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK action"), style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }
     
