@@ -17,7 +17,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Login"
+        label.text = NSLocalizedString("Login", comment: "Title for Login")
         label.font = UIFont.systemFont(ofSize: 22, weight: .bold)
         label.textAlignment = .center
         return label
@@ -25,15 +25,16 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     let emailTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Email"
+        textField.placeholder = NSLocalizedString("Email", comment: "Placeholder for Email")
         textField.borderStyle = .roundedRect
         textField.keyboardType = .emailAddress
+        textField.autocapitalizationType = .none  // Ensure lowercase keyboard
         return textField
     }()
     
     let passwordTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Password"
+        textField.placeholder = NSLocalizedString("Password", comment: "Placeholder for Password")
         textField.borderStyle = .roundedRect
         textField.isSecureTextEntry = true
         return textField
@@ -41,7 +42,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     let loginButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Login", for: .normal)
+        button.setTitle(NSLocalizedString("Login", comment: "Login Button"), for: .normal)
         button.backgroundColor = .systemBlue
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 5
@@ -51,7 +52,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     let signUpButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Sign Up", for: .normal)
+        button.setTitle(NSLocalizedString("Sign Up", comment: "Sign Up Button"), for: .normal)
         button.setTitleColor(.systemBlue, for: .normal)
         return button
     }()
@@ -151,21 +152,15 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         return true
     }
     
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        // Optional: Scroll the view to the current text field
-        let scrollPoint = CGPoint(x: 0, y: textField.frame.origin.y - 20)
-        scrollView.setContentOffset(scrollPoint, animated: true)
-    }
-    
     @objc func loginButtonTapped() {
-        guard let email = emailTextField.text, !email.isEmpty,
+        guard let email = emailTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines), !email.isEmpty,
               let password = passwordTextField.text, !password.isEmpty else {
-            showAlert(message: "Please fill in all fields.")
+            showAlert(message: NSLocalizedString("Please fill in all fields.", comment: "Empty fields error message"))
             return
         }
         
         guard let firstCharacter = email.first, firstCharacter.isLowercase else {
-            showAlert(message: "Email must start with a lowercase letter.")
+            showAlert(message: NSLocalizedString("Email must start with a lowercase letter.", comment: "Email format error message"))
             return
         }
         
@@ -175,13 +170,13 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         do {
             let result = try dataController.viewContext.fetch(fetchRequest)
             if result.isEmpty {
-                showAlert(message: "Invalid email or password.")
+                showAlert(message: NSLocalizedString("Invalid email or password.", comment: "Login error message"))
             } else {
                 // Login successful
                 navigateToListViewController()
             }
         } catch {
-            showAlert(message: "Failed to fetch user: \(error.localizedDescription)")
+            showAlert(message: NSLocalizedString("Failed to fetch user: \(error.localizedDescription)", comment: "Fetch user error message"))
         }
     }
     
@@ -198,10 +193,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         navigationController?.pushViewController(signUpVC, animated: true)
     }
     
-    
     func showAlert(message: String) {
         let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK button"), style: .default))
         present(alert, animated: true)
     }
     
